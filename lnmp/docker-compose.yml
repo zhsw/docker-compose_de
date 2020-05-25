@@ -5,14 +5,15 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - "/var/docker/lnmp/conf:/etc/mysql"
+      - "/var/docker/lnmp/mysql/conf:/etc/mysql"
       - "/var/docker/lnmp/mysql/data:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: "root1234"
       TZ: "Asia/Shanghai"
     restart: always
   php:
-    image: php:7.2-fpm
+    build: ./php
+    image: zhsw/php:7.2-fpm
     links:
       - "mysql:lnmp_mysql"
     volumes:
