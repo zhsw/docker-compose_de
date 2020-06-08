@@ -1,3 +1,6 @@
 /lnmp/mysql/data/
 /lnmp/nginx/logs/
+/lnmp/redis/data/
+/lnmp/redis/logs/
 .idea/
+/onpremise/

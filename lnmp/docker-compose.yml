@@ -2,37 +2,52 @@ version: "2"
 services:
   mysql:
     image: mysql:5.7
+    container_name: lnmp_mysql
     ports:
       - "3306:3306"
     volumes:
-      - "/var/docker/lnmp/mysql/conf:/etc/mysql"
-      - "/var/docker/lnmp/mysql/data:/var/lib/mysql"
+      - "${MYSQL_DIR}/conf:/etc/mysql"
+      - "${MYSQL_DIR}/data:/var/lib/mysql"
     environment:
-      MYSQL_ROOT_PASSWORD: "root1234"
-      TZ: "Asia/Shanghai"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_PWD}"
+      TZ: "${TIMEZONE}"
+    restart: always
+  redis:
+    build: ./redis
+    image: zhsw/redis:6
+    container_name: lnmp_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - "${REDIS_DIR}/conf:/usr/local/etc/redis"
+      - "${REDIS_DIR}/data:/data"
+      - "${REDIS_DIR}/logs:/logs"
     restart: always
   php:
     build: ./php
     image: zhsw/php:7.2-fpm
+    container_name: lnmp_php
     links:
       - "mysql:lnmp_mysql"
+      - "redis:lnmp_redis"
     volumes:
       - "/var/www:/var/www"
     restart: always
     cap_add:
       - SYS_PTRACE
     environment:
-      TZ: "Asia/Shanghai"
+      TZ: "${TIMEZONE}"
   nginx:
     image: nginx:1.17
+    container_name: lnmp_nginx
     links:
       - "php:lnmp_php"
     ports:
-      - "80:80"
+      - "81:80"
     volumes:
-      - "/var/docker/lnmp/nginx/logs:/var/log/nginx"
+      - "${NGINX_DIR}/logs:/var/log/nginx"
       - "/var/www:/var/www"
-      - "/var/docker/lnmp/nginx/etc:/etc/nginx"
+      - "${NGINX_DIR}/etc:/etc/nginx"
     restart: always
     environment:
-      TZ: "Asia/Shanghai"
+      TZ: "${TIMEZONE}"
