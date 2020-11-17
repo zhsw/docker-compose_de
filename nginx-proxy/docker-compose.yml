@@ -1,0 +1,15 @@
+version: "3.2"
+services:
+  nginx-proxy:
+    image: nginx:1.18
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - etc:/etc/nginx
+      - log:/var/log/nginx
+    restart: always
+networks:
+  defaults:
+    external:
+      name: bridge
